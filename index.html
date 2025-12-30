@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* APPLICATEUR GLOBAL DE POLICE MACHINE À ÉCRIRE */
         * {
+            font-family: 'Courier New', Courier, monospace !important;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -36,6 +38,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
+            padding: 20px;
         }
 
         .grain-overlay {
@@ -50,40 +54,41 @@
             opacity: 0.15;
         }
 
-        /* Flicker effect */
-        .flicker {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            opacity: 0;
-            z-index: 1;
-            pointer-events: none;
-            animation: flicker 8s infinite;
-        }
-
-        /* Text container */
+        /* Text container - Optimisé pour mobile */
         .text-container {
             position: relative;
             z-index: 3;
             text-align: center;
+            width: 100%;
+            min-height: 40vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
+        /* Texte décrypté - TRÈS GRAND sur mobile AVEC POLICE MACHINE À ÉCRIRE */
         .name-text {
-            color: #0F0; /* Matrix green */
-            font-size: 6vw;
-            font-weight: normal;
-            letter-spacing: 0.2em;
+            color: #0F0;
+            font-weight: bold;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 5px #0F0, 0 0 10px #0F0, 0 0 15px #0F0;
+            font-family: 'Courier New', Courier, monospace;
+            text-shadow: 0 0 10px #0F0, 0 0 20px #0F0;
+            
+            /* Taille par défaut desktop */
+            font-size: 5vw;
+            
+            /* Sur mobile, le texte devient TRÈS GRAND */
+            font-size: clamp(32px, 12vw, 80px);
+            line-height: 1.2;
+            word-wrap: break-word;
+            max-width: 100%;
         }
 
         .letter {
             display: inline-block;
-            min-width: 0.7em;
+            min-width: 0.5em;
             position: relative;
         }
 
@@ -91,158 +96,159 @@
             animation: snap 0.1s ease-out;
         }
 
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.1em;
-            background-color: #0F0;
-            margin-left: 2px;
-            vertical-align: middle;
-            animation: blink 1.2s infinite;
-            opacity: 0.7;
-        }
-
-        /* Hidden controls */
+        /* Controls */
         .controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             left: 0;
             width: 100%;
             text-align: center;
             z-index: 10;
-            opacity: 0.7;
-            transition: opacity 0.3s;
+            padding: 0 20px;
         }
 
-        .controls:hover {
-            opacity: 1;
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        .controls button {
-            background: rgba(0, 20, 0, 0.8);
-            color: #0F0;
-            border: 1px solid #0F0;
-            padding: 8px 15px;
-            margin: 0 5px;
-            font-family: 'Courier New', monospace;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-            text-shadow: 0 0 5px #0F0;
-        }
-
-        .controls button:hover {
-            background: rgba(0, 40, 0, 0.9);
-            color: #0F0;
-            box-shadow: 0 0 10px #0F0;
-        }
-
+        /* Champ de saisie avec police machine à écrire */
         .name-input {
-            background: rgba(0, 20, 0, 0.8);
+            background: rgba(0, 20, 0, 0.9);
             color: #0F0;
-            border: 1px solid #0F0;
-            padding: 8px 15px;
-            margin: 0 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            width: 150px;
+            border: 2px solid #0F0;
+            padding: 12px 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            width: 200px;
+            max-width: 50%;
             text-shadow: 0 0 5px #0F0;
+            border-radius: 0;
         }
 
         .name-input:focus {
             outline: none;
             border-color: #0F0;
-            box-shadow: 0 0 10px #0F0;
+            box-shadow: 0 0 15px #0F0;
         }
 
         .name-input::placeholder {
             color: #0A0;
             opacity: 0.7;
+            font-family: 'Courier New', Courier, monospace;
         }
 
-        /* Instructions */
-        .instructions {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
+        /* Bouton avec police machine à écrire */
+        #decryptBtn {
+            background: rgba(0, 40, 0, 0.9);
             color: #0F0;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            z-index: 10;
+            border: 2px solid #0F0;
+            padding: 12px 25px;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             text-shadow: 0 0 5px #0F0;
-            letter-spacing: 0.2em;
+            transition: all 0.3s;
+            border-radius: 0;
+        }
+
+        #decryptBtn:hover {
+            background: rgba(0, 60, 0, 1);
+            box-shadow: 0 0 20px #0F0;
+        }
+
+        #decryptBtn:active {
+            transform: scale(0.98);
         }
 
         /* Animations */
-        @keyframes flicker {
-            0%, 100% { opacity: 0; }
-            1% { opacity: 0.05; }
-            2% { opacity: 0; }
-            3% { opacity: 0.1; }
-            4% { opacity: 0; }
-            50% { opacity: 0; }
-            51% { opacity: 0.03; }
-            52% { opacity: 0; }
-            53% { opacity: 0.07; }
-            54% { opacity: 0; }
-            85% { opacity: 0; }
-            86% { opacity: 0.02; }
-            87% { opacity: 0; }
-            88% { opacity: 0.04; }
-            89% { opacity: 0; }
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 0.7; }
-        }
-
         @keyframes snap {
             0% { transform: scale(1); }
-            50% { transform: scale(1.15); text-shadow: 0 0 20px #0F0; }
+            50% { transform: scale(1.2); text-shadow: 0 0 30px #0F0; }
             100% { transform: scale(1); }
         }
 
-        /* Responsive adjustments */
+        /* RESPONSIVE - Mobile first */
         @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .text-container {
+                min-height: 50vh;
+                padding: 10px;
+            }
+            
+            /* Texte ENCORE PLUS GRAND sur petit mobile */
             .name-text {
-                font-size: 10vw;
-                letter-spacing: 0.1em;
+                font-size: clamp(36px, 14vw, 60px);
+                letter-spacing: 0.08em;
+                line-height: 1.3;
+                text-shadow: 0 0 15px #0F0, 0 0 25px #0F0;
+                font-family: 'Courier New', Courier, monospace;
             }
             
             .controls {
-                bottom: 10px;
+                bottom: 20px;
+                padding: 0 15px;
             }
             
-            .controls button, .name-input {
-                padding: 6px 10px;
-                font-size: 12px;
-                margin: 2px;
+            .input-group {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
             }
             
             .name-input {
-                width: 120px;
+                width: 90%;
+                max-width: 300px;
+                padding: 14px 20px;
+                font-size: 18px;
+                font-family: 'Courier New', Courier, monospace;
             }
             
-            .instructions {
-                font-size: 12px;
-                top: 10px;
+            #decryptBtn {
+                width: 90%;
+                max-width: 300px;
+                padding: 16px 30px;
+                font-size: 18px;
+                font-family: 'Courier New', Courier, monospace;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .name-text {
+                font-size: clamp(40px, 16vw, 55px);
+                letter-spacing: 0.05em;
+                font-family: 'Courier New', Courier, monospace;
+            }
+            
+            .text-container {
+                min-height: 55vh;
+            }
+        }
+
+        /* Pour les très grands écrans */
+        @media (min-width: 1200px) {
+            .name-text {
+                font-size: 6vw;
+                font-family: 'Courier New', Courier, monospace;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Matrix Background Canvas -->
+    <!-- Matrix Background Canvas - LES 0 ET 1 DÉFILENT ICI -->
     <canvas id="matrixCanvas"></canvas>
     
     <div class="container">
         <!-- Film grain effect -->
         <div class="grain-overlay"></div>
-        
-        <!-- Screen flicker effect -->
-        <div class="flicker"></div>
         
         <!-- Text container -->
         <div class="text-container">
@@ -253,14 +259,15 @@
         
         <!-- Controls -->
         <div class="controls">
-            <input type="text" class="name-input" id="nameInput" placeholder="Enter name" maxlength="12" value="CODING">
-            <button id="startBtn">DECRYPT</button>
-            <button id="resetBtn">RESET</button>
+            <div class="input-group">
+                <input type="text" class="name-input" id="nameInput" placeholder="Enter text to decrypt" maxlength="15" value="CODING">
+                <button id="decryptBtn">DECRYPT</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Matrix Background Animation
+        // Matrix Background Animation - CE CODE FAIT DÉFILER LES 0 ET 1
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -268,7 +275,7 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // Matrix characters - binary only
+        // Matrix characters - binary only (0 et 1)
         const chars = "01";
         const charArray = chars.split('');
 
@@ -282,19 +289,20 @@
             drops[i] = Math.floor(Math.random() * canvas.height / fontSize) * fontSize;
         }
 
-        // Draw function
+        // Draw function - ANIMATION INFINIE DES 0 ET 1
         function drawMatrix() {
             // Semi-transparent black to create trailing effect
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.font = `bold ${fontSize}px 'Courier New', monospace`;
+            // Police machine à écrire pour le canvas également
+            ctx.font = `bold ${fontSize}px 'Courier New', Courier, monospace`;
             
             for (let i = 0; i < drops.length; i++) {
-                // Random character
+                // Random character (0 ou 1)
                 const char = charArray[Math.floor(Math.random() * charArray.length)];
                 
-                // Set color with varying intensity
+                // Set color with varying intensity (effet Matrix vert)
                 const intensity = Math.random() * 100 + 155;
                 ctx.fillStyle = `rgb(0, ${intensity}, 0)`;
                 
@@ -311,13 +319,13 @@
             }
         }
 
-        // Animation loop
+        // Animation loop infinie - LES 0 ET 1 DÉFILENT EN CONTINU
         function animateMatrix() {
             drawMatrix();
             requestAnimationFrame(animateMatrix);
         }
 
-        // Start matrix animation
+        // Start matrix animation - LE FOND MATRIX COMMENCE DÈS LE DÉPART
         animateMatrix();
 
         // Resize handler
@@ -326,53 +334,48 @@
             canvas.height = window.innerHeight;
         });
 
-        // Original decryption animation code
+        // Decryption animation
         const config = {
-            totalDuration: 5,
+            totalDuration: 4,
             finalHoldTime: 1,
             fastSpeed: 40,
-            characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            defaultName: "CODING"
+            characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*",
+            defaultText: "CODING"
         };
 
         const nameText = document.getElementById('nameText');
         const nameInput = document.getElementById('nameInput');
-        const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
+        const decryptBtn = document.getElementById('decryptBtn');
 
         let animationActive = false;
         let animationTimeout = null;
 
-        nameInput.value = config.defaultName;
+        nameInput.value = config.defaultText;
 
-        function startDecryption(name) {
+        function startDecryption(text) {
             if (animationActive) return;
             
             animationActive = true;
             nameText.innerHTML = '';
             
-            const cleanName = name.toUpperCase().replace(/[^A-Z]/g, '');
+            const cleanText = text.toUpperCase().replace(/[^A-Z0-9!@#$%&*]/g, '');
             
-            if (cleanName.length === 0) {
+            if (cleanText.length === 0) {
                 animationActive = false;
                 return;
             }
             
             const letters = [];
-            for (let i = 0; i < cleanName.length; i++) {
+            for (let i = 0; i < cleanText.length; i++) {
                 const letterSpan = document.createElement('span');
                 letterSpan.className = 'letter';
                 letterSpan.textContent = ' ';
-                letterSpan.dataset.target = cleanName[i];
+                letterSpan.dataset.target = cleanText[i];
                 nameText.appendChild(letterSpan);
                 letters.push(letterSpan);
             }
             
-            const cursor = document.createElement('span');
-            cursor.className = 'cursor';
-            nameText.appendChild(cursor);
-            
-            const totalLetters = cleanName.length;
+            const totalLetters = cleanText.length;
             const availableTime = config.totalDuration - config.finalHoldTime;
             const timePerLetter = availableTime / totalLetters;
             
@@ -384,7 +387,6 @@
             });
             
             setTimeout(() => {
-                cursor.remove();
                 animationActive = false;
             }, config.totalDuration * 1000);
         }
@@ -406,7 +408,7 @@
                 
                 if (elapsed < duration * 1000 * 0.7) {
                     const cycleProgress = elapsed / (duration * 1000 * 0.7);
-                    const cycles = Math.floor(cycleProgress * 10);
+                    const cycles = Math.floor(cycleProgress * 15);
                     
                     currentIndex = (randomStart + cycles) % config.characters.length;
                     letterElement.textContent = config.characters[currentIndex];
@@ -462,24 +464,22 @@
             nameText.innerHTML = '';
         }
 
-        startBtn.addEventListener('click', () => {
+        decryptBtn.addEventListener('click', () => {
             resetAnimation();
             setTimeout(() => {
-                startDecryption(nameInput.value || config.defaultName);
+                startDecryption(nameInput.value || config.defaultText);
             }, 100);
         });
 
-        resetBtn.addEventListener('click', resetAnimation);
-
         window.addEventListener('load', () => {
             setTimeout(() => {
-                startDecryption(config.defaultName);
+                startDecryption(config.defaultText);
             }, 500);
         });
 
         nameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                startBtn.click();
+                decryptBtn.click();
             }
         });
     </script>
